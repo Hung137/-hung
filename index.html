@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>外送 — 首單免運</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div id="reactRoot">
+      <header class="site-header">
+        <a class="logo" href="index.html">外送</a>
+        <div class="site-header-actions">
+          <button type="button" class="btn btn-ghost cart-header-btn" id="btn-open-cart" aria-label="開啟購物車">
+            購物車<span id="cart-badge" class="cart-badge" hidden>0</span>
+          </button>
+          <nav class="nav-actions nav-actions--guest" id="nav-guest" aria-label="未登入選單">
+            <button type="button" class="btn btn-ghost" data-open-login>登入</button>
+            <button type="button" class="btn btn-primary" data-open-signup>註冊</button>
+          </nav>
+          <nav class="nav-actions nav-actions--user" id="nav-user" aria-label="已登入選單" hidden>
+            <div class="user-pill-cluster">
+              <span class="user-pill" id="nav-user-email" title="目前帳號"></span>
+              <button type="button" class="user-pill-logout" id="btn-logout" aria-label="登出" title="登出">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                  <polyline points="16 17 21 12 16 7"></polyline>
+                  <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+              </button>
+            </div>
+          </nav>
+        </div>
+      </header>
+
+      <main id="main-content" class="main-content">
+        <div class="rlp-container">
+          <section class="hero-banner" aria-label="首單優惠">
+            <div class="hero-inner" id="hero-guest">
+              <h1 class="hero-title">首單免運費，立即註冊</h1>
+              <p class="hero-sub">新用戶專享，下單即享免費配送。</p>
+              <button type="button" class="btn btn-primary btn-lg" data-open-signup>
+                免費註冊
+              </button>
+            </div>
+            <div class="hero-inner hero-inner--logged-in" id="hero-user" hidden>
+              <p class="hero-welcome" id="hero-welcome-line"></p>
+              <h1 class="hero-title">首單免運已為你準備好</h1>
+              <p class="hero-sub">從下面菜系挑一間店，或直接瀏覽每日優惠。</p>
+              <div class="hero-logged-actions">
+                <button type="button" class="btn btn-primary btn-lg" id="hero-btn-browse">瀏覽餐廳</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="section" aria-labelledby="cuisines-heading">
+            <h2 id="cuisines-heading" class="section-title">你喜歡的菜系</h2>
+            <div class="cuisine-scroll cuisine-grid" role="list">
+              <!-- filled by JS -->
+            </div>
+          </section>
+
+          <section class="section" aria-labelledby="deals-heading">
+            <div class="section-head">
+              <h2 id="deals-heading" class="section-title">每日優惠</h2>
+              <button type="button" class="link-btn" id="shuffle-deals">換一批</button>
+            </div>
+            <p class="filter-hint" id="filter-hint" aria-live="polite"></p>
+            <div class="bds-c-global-grid rlp-grid" id="deals-grid" role="list">
+              <!-- cards from JS -->
+            </div>
+          </section>
+        </div>
+      </main>
+
+      <div class="modal-backdrop" id="signup-modal" hidden aria-hidden="true">
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="signup-modal-title">
+          <button type="button" class="modal-close" data-close-modal aria-label="關閉">&times;</button>
+          <h2 id="signup-modal-title">建立帳號</h2>
+          <p class="modal-lead">Email 會以 JSON 存在此瀏覽器的本機儲存（僅示範）。</p>
+          <form class="signup-form" id="signup-form">
+            <p class="form-error" id="signup-form-error" role="alert" aria-live="polite" hidden>
+              <span class="form-error-msg" id="signup-form-error-msg"></span>
+              <button type="button" class="link-btn link-btn-inline form-error-cta" id="signup-err-goto-login" hidden>
+                改為登入
+              </button>
+            </p>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" id="signup-email-input" required placeholder="you@example.com" autocomplete="email" />
+            </label>
+            <button type="submit" class="btn btn-primary btn-block">註冊並登入</button>
+          </form>
+          <p class="modal-footer-link">
+            已有帳號？
+            <button type="button" class="link-btn link-btn-inline" id="signup-goto-login">登入</button>
+          </p>
+        </div>
+      </div>
+
+      <div class="modal-backdrop" id="login-modal" hidden aria-hidden="true">
+        <div class="modal-dialog" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+          <button type="button" class="modal-close" data-close-modal aria-label="關閉">&times;</button>
+          <h2 id="login-modal-title">登入</h2>
+          <p class="modal-lead">請使用已註冊的 Email。</p>
+          <form class="signup-form" id="login-form">
+            <p class="form-error" id="login-form-error" role="alert" aria-live="polite" hidden>
+              <span class="form-error-msg" id="login-form-error-msg"></span>
+              <button type="button" class="link-btn link-btn-inline form-error-cta" id="login-err-goto-signup" hidden>
+                建立帳號
+              </button>
+            </p>
+            <label class="field">
+              <span>Email</span>
+              <input type="email" name="email" id="login-email-input" required placeholder="you@example.com" autocomplete="email" />
+            </label>
+            <button type="submit" class="btn btn-primary btn-block">登入</button>
+          </form>
+          <p class="modal-footer-link">
+            還沒有帳號？
+            <button type="button" class="link-btn link-btn-inline" id="login-goto-signup">註冊</button>
+          </p>
+        </div>
+      </div>
+
+      <div id="cart-drawer-backdrop" class="cart-drawer-backdrop" hidden></div>
+      <div
+        id="cart-drawer"
+        class="cart-drawer"
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="cart-drawer-title"
+        aria-hidden="true"
+      >
+        <div class="cart-drawer-panel">
+          <div class="cart-drawer-head">
+            <h2 id="cart-drawer-title">購物車</h2>
+            <button type="button" class="modal-close" data-close-cart aria-label="關閉購物車">&times;</button>
+          </div>
+          <div id="cart-drawer-lines" class="cart-drawer-lines"></div>
+          <div class="cart-drawer-foot">
+            <p class="cart-subtotal-row">小計 <strong id="cart-subtotal">$0</strong></p>
+            <div class="cart-drawer-foot-btns">
+              <button type="button" class="btn btn-primary btn-block" id="cart-checkout">下單</button>
+              <button type="button" class="btn btn-ghost btn-block" id="cart-clear">清空購物車</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        id="order-success-modal"
+        class="modal-backdrop order-success-modal"
+        hidden
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="order-success-title"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <h2 id="order-success-title">下單成功</h2>
+          <p class="modal-lead">您的訂單已送出（示範），購物車已清空。</p>
+          <p class="order-success-amount" id="order-success-amount"></p>
+          <button type="button" class="btn btn-primary btn-block" id="order-success-ok">完成</button>
+        </div>
+      </div>
+
+      <aside id="cart-preview" class="cart-preview" hidden aria-live="polite" aria-label="購物車即時預覽">
+        <div class="cart-preview-inner">
+          <p class="cart-preview-heading">購物車預覽</p>
+          <div id="cart-preview-lines" class="cart-preview-lines"></div>
+          <div class="cart-preview-bar">
+            <div class="cart-preview-bar-text">
+              <span id="cart-preview-meta">共 0 件</span>
+              <strong id="cart-preview-total" class="cart-preview-total">$0</strong>
+            </div>
+            <button type="button" class="btn btn-primary cart-preview-detail-btn" id="cart-preview-open-drawer">
+              查看明細
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+    <script src="data.js"></script>
+    <script src="auth.js"></script>
+    <script src="cart.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
